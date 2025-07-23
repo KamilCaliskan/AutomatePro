@@ -1,0 +1,77 @@
+2025-07-23 16:50:36,742 - WARNING - ⚠️ Client file missing - generating sample data
+2025-07-23 16:50:37,428 - ERROR - 🔥 Critical Error: [Errno 2] No such file or directory: '/home/user/AutomatePro/data/input/sales_2023.xlsx'
+2025-07-23 17:11:24,023 - INFO - 🚀 Browser launched successfully.
+2025-07-23 17:13:24,127 - ERROR - 💥 Unexpected error: HTTPConnectionPool(host='localhost', port=38211): Read timed out. (read timeout=120)
+2025-07-23 17:14:34,468 - INFO - 🧹 Browser session ended.
+2025-07-23 17:16:36,517 - WARNING - ⚠️ Client file missing - generating sample data
+2025-07-23 17:16:50,220 - ERROR - 🔥 Critical Error: [Errno 2] No such file or directory: '/home/user/AutomatePro/data/input/sales_2023.xlsx'
+2025-07-23 17:21:13,751 - INFO - Starting full automation
+2025-07-23 17:21:18,581 - INFO - 🚀 Browser launched successfully.
+2025-07-23 17:21:20,565 - ERROR - 💥 Unexpected error: Message: unknown error: net::ERR_NAME_NOT_RESOLVED
+  (Session info: chrome=138.0.7204.92)
+Stacktrace:
+#0 0x55d4b06e9952 <unknown>
+#1 0x55d4b0194ab5 <unknown>
+#2 0x55d4b018d5fd <unknown>
+#3 0x55d4b017e991 <unknown>
+#4 0x55d4b0180717 <unknown>
+#5 0x55d4b017ecd9 <unknown>
+#6 0x55d4b017e575 <unknown>
+#7 0x55d4b017e4c5 <unknown>
+#8 0x55d4b017c8a1 <unknown>
+#9 0x55d4b017cb88 <unknown>
+#10 0x55d4b0198a35 <unknown>
+#11 0x55d4b022ca1f <unknown>
+#12 0x55d4b020a1d6 <unknown>
+#13 0x55d4b022c1e6 <unknown>
+#14 0x55d4b0209f87 <unknown>
+#15 0x55d4b01d7ca1 <unknown>
+#16 0x55d4b01d8a85 <unknown>
+#17 0x55d4b06b524e <unknown>
+#18 0x55d4b06b864f <unknown>
+#19 0x55d4b06b80ec <unknown>
+#20 0x55d4b06b8af9 <unknown>
+#21 0x55d4b069eacb <unknown>
+#22 0x55d4b06b8e74 <unknown>
+#23 0x55d4b0687cad <unknown>
+#24 0x55d4b06d77a9 <unknown>
+#25 0x55d4b06d799f <unknown>
+#26 0x55d4b06e8c29 <unknown>
+#27 0x7f951b512b7b <unknown>
+
+2025-07-23 17:21:20,680 - INFO - 🧹 Browser session ended.
+2025-07-23 17:21:20,680 - ERROR - CRM failed: Message: unknown error: net::ERR_NAME_NOT_RESOLVED
+  (Session info: chrome=138.0.7204.92)
+Stacktrace:
+#0 0x55d4b06e9952 <unknown>
+#1 0x55d4b0194ab5 <unknown>
+#2 0x55d4b018d5fd <unknown>
+#3 0x55d4b017e991 <unknown>
+#4 0x55d4b0180717 <unknown>
+#5 0x55d4b017ecd9 <unknown>
+#6 0x55d4b017e575 <unknown>
+#7 0x55d4b017e4c5 <unknown>
+#8 0x55d4b017c8a1 <unknown>
+#9 0x55d4b017cb88 <unknown>
+#10 0x55d4b0198a35 <unknown>
+#11 0x55d4b022ca1f <unknown>
+#12 0x55d4b020a1d6 <unknown>
+#13 0x55d4b022c1e6 <unknown>
+#14 0x55d4b0209f87 <unknown>
+#15 0x55d4b01d7ca1 <unknown>
+#16 0x55d4b01d8a85 <unknown>
+#17 0x55d4b06b524e <unknown>
+#18 0x55d4b06b864f <unknown>
+#19 0x55d4b06b80ec <unknown>
+#20 0x55d4b06b8af9 <unknown>
+#21 0x55d4b069eacb <unknown>
+#22 0x55d4b06b8e74 <unknown>
+#23 0x55d4b0687cad <unknown>
+#24 0x55d4b06d77a9 <unknown>
+#25 0x55d4b06d799f <unknown>
+#26 0x55d4b06e8c29 <unknown>
+#27 0x7f951b512b7b <unknown>
+
+2025-07-23 17:21:20,681 - WARNING - ⚠️ Client file missing - generating sample data
+2025-07-23 17:21:21,960 - ERROR - 🔥 Critical Error in Excel automation: [Errno 2] No such file or directory: '/home/user/AutomatePro/data/input/sales_2023.xlsx'
+2025-07-23 17:21:21,960 - INFO - Excel processed successfully

@@ -8,3 +8,5 @@
 2025-07-23 15:30:24,524 - ERROR - 🔥 Critical Error: [Errno 2] No such file or directory: '/home/user/AutomatePro/data/input/sales_2023.xlsx'
 2025-07-23 15:31:06,407 - WARNING - ⚠️ Client file missing - generating sample data
 2025-07-23 15:31:07,094 - ERROR - 🔥 Critical Error: [Errno 2] No such file or directory: '/home/user/AutomatePro/data/input/sales_2023.xlsx'
+2025-07-23 17:04:33,567 - WARNING - ⚠️ Client file missing - generating sample data
+2025-07-23 17:04:34,134 - ERROR - 🔥 Critical Error: [Errno 2] No such file or directory: '/home/user/AutomatePro/data/input/sales_2023.xlsx'

@@ -1,0 +1,18 @@
+# Secrets
+credentials/
+*.env
+
+# Virtual environment
+venv/
+automatepro_venv/
+
+# Data files
+data/input/
+data/output/
+
+# System
+.DS_Store
+__pycache__
+
+# Error logs
+logs/error_*.png

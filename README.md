@@ -1,3 +1,12 @@
-# AutomatePro Docs
+# AutomatePro - Business Process Automation
 
-Just run `python3 full_automation.py`
+## Features
+- Excel report generation (Pandas/OpenPyXL)
+- CRM data scraping (Selenium)
+- Error handling with notifications
+
+## Setup
+```bash
+pip install -r requirements.txt
+python3 full_automation.py
+```

@@ -1,12 +1,12 @@
-# AutomatePro - Business Process Automation
+# AutomatePro - Excel Automation Tool
 
-## Features
-- Excel report generation (Pandas/OpenPyXL)
-- CRM data scraping (Selenium)
-- Error handling with notifications
+## Latest Updates (v2.4)
+- Added advanced address parsing
+- Enhanced multilingual support
+- Improved error handling
 
-## Setup
+## Installation
 ```bash
+git clone https://github.com/KamilCaliskan/AutomatePro.git
+cd AutomatePro
 pip install -r requirements.txt
-python3 full_automation.py
-```

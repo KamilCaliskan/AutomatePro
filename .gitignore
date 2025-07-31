@@ -16,3 +16,4 @@ __pycache__
 
 # Error logs
 logs/error_*.png
+venv/

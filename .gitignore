@@ -2,18 +2,30 @@
 credentials/
 *.env
 
-# Virtual environment
+# Virtual environments
 venv/
 automatepro_venv/
 
-# Data files
+# Data files (input/output)
 data/input/
 data/output/
 
-# System
-.DS_Store
-__pycache__
+# Python cache and compiled files
+__pycache__/
+*.pyc
 
-# Error logs
-logs/error_*.png
-venv/
+# Build folders and specs
+build/
+dist/
+*.spec
+
+# System files
+.DS_Store
+
+# Logs
+logs/
+*.log
+
+# IDE/editor configs
+.vscode/
+.idea/

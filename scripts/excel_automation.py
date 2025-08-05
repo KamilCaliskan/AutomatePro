@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-"""
-Excel Automation Tool v2.5
-- Cross-platform (Windows/Linux/Mac)
-- Multi-language column detection
-- Detailed error logging
-"""
-
 import os
 import sys
 import logging
@@ -58,9 +50,9 @@ def normalize_text(text: str) -> str:
     return unicodedata.normalize('NFKD', str(text).strip()).casefold()
 
 COLUMN_MAPPINGS: Dict[str, List[str]] = {
-    'product': ['product', 'item', 'ürün', 'produkt', 'product name'],
-    'sales': ['sales', 'amount', 'satış', 'umsatz', 'total', 'revenue'],
-    'region': ['region', 'bölge', 'gebiet', 'area', 'city', 'şehir']
+    'product': ['product', 'item', 'Customer', 'ürün', 'produkt', 'product name'],
+    'sales': ['sales', 'amount',  'Amount', 'Satış','satış', 'umsatz', 'total', 'revenue'],
+    'region': ['region','city', 'Location', 'bölge', 'gebiet', 'area', 'city', 'şehir']
 }
 
 def find_matching_column(available_columns: list, possible_names: list) -> Optional[str]:
@@ -79,6 +71,13 @@ def find_matching_column(available_columns: list, possible_names: list) -> Optio
     except Exception as e:
         logger.error(f"Column matching failed: {str(e)}", exc_info=True)
         return None
+def validate_columns(df):
+    missing = []
+    for col in ['product', 'sales']:
+        if col not in df.columns:
+            missing.append(col)
+    if missing:
+        raise ValueError(f"Missing required columns: {missing}")
 
 def process_excel(input_file: Path, output_file: Path) -> bool:
     """

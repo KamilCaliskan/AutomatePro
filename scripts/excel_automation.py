@@ -1,207 +1,119 @@
-import os
-import sys
-import logging
+#!/usr/bin/env python3
+"""
+Enhanced Excel Automation Tool
+- Cross-platform Excel processing
+- Flexible column name matching
+- Detailed error logging
+"""
+
 import pandas as pd
 from pathlib import Path
+import logging
+from typing import Dict, List, Optional, Tuple
 import unicodedata
-from typing import Dict, Optional, List
-import traceback
 
-# ====================== PATH HANDLING ======================
-def get_base_path() -> tuple[Path, Path]:
-    """
-    Handle path resolution for both development and bundled versions
-    Returns: (base_path, data_path)
-    """
-    try:
-        if getattr(sys, 'frozen', False):
-            base_path = Path(sys._MEIPASS)  # Bundled executable
-        else:
-            base_path = Path(__file__).parent.parent  # Development
-
-        data_path = base_path / "data"
-
-        # Ensure directories exist
-        (data_path / "input").mkdir(parents=True, exist_ok=True)
-        (data_path / "output").mkdir(parents=True, exist_ok=True)
-        (data_path / "logs").mkdir(parents=True, exist_ok=True)
-
-        return base_path, data_path
-
-    except Exception as e:
-        print(f"🚨 Critical path error: {str(e)}")
-        sys.exit(1)
-
-BASE_DIR, DATA_DIR = get_base_path()
-
-# ====================== LOGGING SETUP ======================
-log_file = DATA_DIR / "logs" / "excel_processing.log"
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    filename=str(log_file),
-    filemode='a'
-)
-logger = logging.getLogger(__name__)
-
-# ====================== CORE FUNCTIONALITY ======================
-def normalize_text(text: str) -> str:
-    """Normalize unicode and case for reliable matching"""
-    return unicodedata.normalize('NFKD', str(text).strip()).casefold()
-
+# ====================== CONFIGURATION ======================
 COLUMN_MAPPINGS: Dict[str, List[str]] = {
-    'product': ['product', 'item', 'Customer', 'ürün', 'produkt', 'product name'],
-    'sales': ['sales', 'amount',  'Amount', 'Satış','satış', 'umsatz', 'total', 'revenue'],
-    'region': ['region','city', 'Location', 'bölge', 'gebiet', 'area', 'city', 'şehir']
+    'product': ['product', 'product name', 'item', 'product_name', 'product-name', 'article', 'description'],
+    'sales': ['sales', 'amount', 'revenue', 'total', 'value', 'price', 'income'],
+    'region': ['region', 'area', 'location', 'territory', 'zone', 'market', 'country']
 }
 
-def find_matching_column(available_columns: list, possible_names: list) -> Optional[str]:
-    """
-    Find matching column with flexible naming
-    Returns: matched column name or None
-    """
+REQUIRED_COLUMNS = {'product', 'sales'}
+
+# ====================== LOGGING SETUP ======================
+def setup_logging():
+    log_file = Path(__file__).parent.parent / 'data' / 'logs' / 'excel_processing.log'
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        filename=str(log_file),
+        filemode='a'
+    )
+    return logging.getLogger(__name__)
+
+logger = setup_logging()
+
+# ====================== CORE FUNCTIONS ======================
+def normalize_text(text: str) -> str:
+    """Normalize text for reliable matching"""
+    return unicodedata.normalize('NFKD', str(text).strip().lower().replace(' ', '_'))
+
+def find_matching_column(available_columns: List[str], possible_names: List[str]) -> Optional[str]:
+    """Flexible column name matching with multiple strategies"""
     try:
         available_normalized = [(col, normalize_text(col)) for col in available_columns]
+
         for possible in possible_names:
-            possible_normalized = normalize_text(possible)
+            possible_norm = normalize_text(possible)
+
+            # Check for exact match first
             for orig_col, norm_col in available_normalized:
-                if possible_normalized in norm_col or norm_col in possible_normalized:
+                if possible_norm == norm_col:
                     return orig_col
+
+            # Then check for partial matches
+            for orig_col, norm_col in available_normalized:
+                if possible_norm in norm_col or norm_col in possible_norm:
+                    return orig_col
+
         return None
     except Exception as e:
-        logger.error(f"Column matching failed: {str(e)}", exc_info=True)
+        logger.error(f"Column matching error: {str(e)}", exc_info=True)
         return None
-def validate_columns(df):
-    missing = []
-    for col in ['product', 'sales']:
-        if col not in df.columns:
-            missing.append(col)
-    if missing:
-        raise ValueError(f"Missing required columns: {missing}")
 
-def process_excel(input_file: Path, output_file: Path) -> bool:
-    """
-    Process Excel file with error handling
-    Returns: True if successful, False otherwise
-    """
+def process_excel(input_file: Path, output_file: Path) -> Tuple[bool, str]:
+    """Process Excel file with enhanced error handling"""
     try:
-        logger.info(f"🔍 Starting processing: {input_file}")
-
-        # Read input with engine detection
+        # Try multiple engines for compatibility
         try:
-            df = pd.read_excel(input_file, engine=None)
-            logger.info(f"📊 Loaded DataFrame with columns: {list(df.columns)}")
-        except Exception as e:
-            logger.error(f"Failed to read Excel file: {str(e)}")
-            return False
+            df = pd.read_excel(input_file, engine='openpyxl')
+        except:
+            df = pd.read_excel(input_file, engine='xlrd')
 
         # Build column mapping
         mapping = {}
+        warnings = []
         for internal_name, possible_names in COLUMN_MAPPINGS.items():
-            matched_col = find_matching_column(df.columns, possible_names)
+            matched_col = find_matching_column(df.columns.tolist(), possible_names)
             if matched_col:
                 mapping[internal_name] = matched_col
-                logger.info(f"🔗 Mapped '{matched_col}' → '{internal_name}'")
+                logger.info(f"Column mapped: {matched_col} → {internal_name}")
             else:
-                logger.warning(f"⚠️ No match for {internal_name}")
+                warnings.append(f"No match for '{internal_name}' (tried: {possible_names})")
 
-        # Validate essential columns
-        required_columns = {'product', 'sales'}
-        if not required_columns.issubset(mapping.keys()):
-            missing = required_columns - set(mapping.keys())
-            raise ValueError(f"Missing required columns: {missing}")
+        # Validate required columns
+        missing = REQUIRED_COLUMNS - set(mapping.keys())
+        if missing:
+            error_msg = f"Missing required columns: {missing}. {'; '.join(warnings)}"
+            logger.error(error_msg)
+            return False, error_msg
 
-        # Process data with row-level error handling
-        processed_data = []
-        error_count = 0
-
-        for idx, row in df.iterrows():
-            try:
-                processed_data.append({
-                    'product': str(row[mapping['product']]).strip(),
-                    'sales': round(float(row[mapping['sales']]), 2),
-                    'region': str(row.get(mapping.get('region', ''), 'Unknown')).strip(),
-                    'source_row': idx + 2
-                })
-            except Exception as e:
-                error_count += 1
-                logger.warning(f"⚠️ Row {idx+2} skipped: {str(e)}")
-                continue
-
-        # Save output
+        # Process and save data
         try:
-            pd.DataFrame(processed_data).to_excel(
-                output_file,
-                index=False,
-                engine='openpyxl'
-            )
-            logger.info(f"✅ Success! Output saved to {output_file}")
-            if error_count > 0:
-                logger.warning(f"⚠️ Skipped {error_count} rows with errors")
-            return True
+            output_df = df.rename(columns={v:k for k,v in mapping.items()})
+            output_df.to_excel(output_file, index=False, engine='openpyxl')
+
+            success_msg = f"Successfully processed {len(df)} rows"
+            logger.info(success_msg)
+            return True, success_msg
 
         except Exception as e:
-            logger.error(f"Failed to save output: {str(e)}")
-            return False
+            error_msg = f"Data processing failed: {str(e)}"
+            logger.error(error_msg, exc_info=True)
+            return False, error_msg
 
     except Exception as e:
-        logger.error(f"❌ Processing failed: {str(e)}", exc_info=True)
-        print(f"🔥 FAIL REASON: {str(e)}" if 'e' in locals() else "🔥 UNKNOWN FAILURE")
-        return False  # ← Final return point
+        error_msg = f"File reading failed: {str(e)}"
+        logger.error(error_msg, exc_info=True)
+        return False, error_msg
 
-# ====================== COMMAND LINE INTERFACE ======================
-def main() -> int:
-    """Command line entry point"""
-    parser = argparse.ArgumentParser(
-        description='AutomatePro Excel Processor v2.5',
-        formatter_class=argparse.RawTextHelpFormatter
-    )
-    parser.add_argument(
-        'input',
-        help='Input file name (from data/input/)'
-    )
-    parser.add_argument(
-        'output',
-        help='Output file name (saved to data/output/)'
-    )
-    parser.add_argument(
-        '--verbose',
-        action='store_true',
-        help='Show detailed console output'
-    )
-
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Process Excel files')
+    parser.add_argument('input', help='Input Excel file path')
+    parser.add_argument('output', help='Output Excel file path')
     args = parser.parse_args()
 
-    # Configure paths
-    input_file = DATA_DIR / "input" / args.input
-    output_file = DATA_DIR / "output" / args.output
-
-    # Validate input
-    if not input_file.exists():
-        print(f"❌ Error: Input file not found at {input_file}")
-        return 1
-
-    # Process file
-    success = process_excel(input_file, output_file)
-
-    # Output results
-    if success:
-        print(f"✅ Success! Output saved to:\n{output_file}")
-        if args.verbose:
-            print(f"📄 Log file: {log_file}")
-        return 0
-    else:
-        print(f"❌ Processing failed - check logs:\n{log_file}")
-        return 1
-
-if __name__ == "__main__":
-    import argparse
-    try:
-        sys.exit(main())
-    except KeyboardInterrupt:
-        print("\n🛑 Process interrupted by user")
-        sys.exit(1)
-    except Exception as e:
-        print(f"🚨 Unexpected error: {str(e)}")
-        traceback.print_exc()
-        sys.exit(1)
+    success, message = process_excel(Path(args.input), Path(args.output))
+    print(f"{'✅' if success else '❌'} {message}")

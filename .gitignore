@@ -2,6 +2,10 @@
 credentials/
 *.env
 
+# Ignore compiled bytecode
+__pycache__/
+*.pyc
+
 # Virtual environments
 venv/
 automatepro_venv/
@@ -9,6 +13,7 @@ automatepro_venv/
 # Data files (input/output)
 data/input/
 data/output/
+data/logs/
 
 # Python cache and compiled files
 __pycache__/
@@ -29,3 +34,9 @@ logs/
 # IDE/editor configs
 .vscode/
 .idea/
+
+# Ignore environment variables
+*.env
+
+# Ignore OS files
+.DS_Store
